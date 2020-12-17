@@ -1,0 +1,134 @@
+<!--/* 
+Aquesta plantilla és la base de les propostes d'aprenentatge de tipus MEF gestionades a la biblioteca
+flexible-learning-view-mef. 
+
+*/-->
+<!DOCTYPE html>
+<html lang="ca">
+  <head>
+    <meta charset="utf-8">
+    <meta data-th-if="${learningProposal != null && learningProposal.id != null}" name="id" data-th-attr="content=${learningProposal.id}">
+    <meta data-th-if="${learningProposal != null && learningProposal.description != null}" name="description" data-th-attr='content=${learningProposal.description}'>
+    <meta data-th-if="${learningProposal != null && learningProposal.keywords != null}" name="keywords" data-th-attr='content=${learningProposal.keywords}'>
+    <meta data-th-if="${learningProposal != null && learningProposal.authors != null}" data-th-each="author : ${learningProposal.authors}" name="author" data-th-attr='content=${author}'>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">	
+    <link rel="stylesheet" href="./css/mef/mef.css">
+    <!--/*/ <th:block th:if="${linkSelectors!=null}"> /*/--> 
+    <!--/*/ <th:block th:insert="mef/mef_links :: [link[__${linkSelectors}__]]"> /*/-->             
+    <!--/*/ </th:block> /*/-->  
+    <!--/*/ </th:block> /*/-->
+    <script src="./js/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <!--/*/ <th:block th:if="${scriptSelectors!=null}"> /*/--> 
+    <!--/*/ <th:block th:insert="mef/mef_scripts :: [script[__${scriptSelectors}__]]"> /*/-->             
+    <!--/*/ </th:block> /*/-->  
+    <!--/*/ </th:block> /*/-->    
+  </head>
+  <body>
+    <div>
+        <header class="fp">
+            <div class='d-flex flex-row'>
+                <!--logo-->
+                <img alt='logo' id='logo' src='./img/logo.png'/>
+                <div class="activity-name" data-th-text="${navComponentData.learningProposalName}">
+                    mef_base.html
+                </div>
+            </div>
+        </header>
+    	<nav class="navbar fixed-top d-flex flex-row-reverse">
+            <div class="d-flex flex-row-reverse navbar-container">  
+                <!--botó informació-->
+                <a id="infoButton" title="informació d'interés" data-th-if="${navComponentData.hasInfoText()}" href="javascript:void(0)" class="openbtn" onclick="mefData.libNav.toggleInfoPanel()">    	
+                    <svg class="bi bi-info" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" fill="#fff" height="25" width="25">
+                      <path fill-rule="evenodd" d="M10 17a7 7 0 100-14 7 7 0 000 14zm8-7a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd"></path>
+                      <path d="M10.93 8.588l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533l1.002-4.705z"></path>
+                      <circle cx="10" cy="6.5" r="1"></circle>
+                    </svg>
+                </a>
+                <!--botó recursos de consulta -->
+                <a title="recursos i material de consulta" id="relatedResourcesButton" href="javascript:void(0)" class="openbtn" onclick="mefData.libNav.toggleRelatedResources()">    
+	                <svg class="bi bi-book" xmlns="http://www.w3.org/2000/svg" width="25" height="25" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M3 5h4v1H3V5zm0 3h4V7H3v1zm0 2h4V9H3v1zm11-5h-4v1h4V5zm0 2h-4v1h4V7zm0 2h-4v1h4V9zm2-6v9c0 .55-.45 1-1 1H9.5l-1 1-1-1H2c-.55 0-1-.45-1-1V3c0-.55.45-1 1-1h5.5l1 1 1-1H15c.55 0 1 .45 1 1zm-8 .5L7.5 3H2v9h6V3.5zm7-.5H9.5l-.5.5V12h6V3z"/>
+	                </svg>
+                </a>
+                <!--panell dels recursos de consulta-->
+                <div id="relatedResourcesSidepanel" class="sidepanel">
+                    <a data-th-each="relatedResource : ${navComponentData.relatedResources}" class="resourceReference" data-th-attr="data-url=${relatedResource.url}" href="javascript:void(0)" data-th-text="${relatedResource.text}">Recurs 1</a>
+                    <!--/*-->
+                    <a class="resourceReference" href="javascript:void(0)" >Recurs 2</a>
+                    <!--*/-->
+                </div>  
+                
+                <a title="resum o esquema" data-th-if="${navComponentData.hasSummary()}" id="summaryButton" href="javascript:void(0)" class="openbtn" onclick="mefData.libNav.toggleSummaryPanel()">    
+                    <svg class="bi bi-summary" xmlns="http://www.w3.org/2000/svg" fill="#fff" height="25" viewBox="0 0 24 24" width="25"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M4 5v13h17V5H4zm2 11V7h3v9H6zm5 0v-3.5h3V16h-3zm8 0h-3v-3.5h3V16zm-8-5.5V7h8v3.5h-8z"/></svg>
+                </a>
+                <a title="vídeo" data-th-if="${navComponentData.hasExplanatoryVideo()}" id="explanatoryVideoButton" href="javascript:void(0)" class="openbtn" onclick="mefData.libNav.toggleExplanatoryVideo()">    
+	                <svg class="bi bi-film" xmlns="http://www.w3.org/2000/svg" fill="#fff"  height="25" viewBox="0 0 24 24" width="25"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M18 3v2h-2V3H8v2H6V3H4v18h2v-2h2v2h8v-2h2v2h2V3h-2zM8 17H6v-2h2v2zm0-4H6v-2h2v2zm0-4H6V7h2v2zm6 10h-4V5h4v14zm4-2h-2v-2h2v2zm0-4h-2v-2h2v2zm0-4h-2V7h2v2z"/></svg>
+                </a>
+                <!--/*/ <th:block th:if="${progressbarComponent!=null}"> /*/--> 
+                 <!--barra de progrés-->
+                <div data-th-replace='${progressbarComponent.templateName} :: ${progressbarComponent.getFragmentName()}' >
+                </div>
+                 <!--/*/ </th:block> /*/-->
+           </div>
+    	</nav>
+    </div>
+    <main class="d-flex justify-content-center">
+        <div id="infoPanel" class="container W-100 hiddenTopPanel" data-th-if="${navComponentData.hasInfoText()}" data-th-utext="${navComponentData.infoText}" >
+                <h3>infoooooo</h3> 
+                <p>Lorem ipsum dolor sit amet. Et minus minima sit voluptatibus repudiandae sed ipsam voluptatem sed similique ratione quaerat vero qui quis molestiae vel corrupti internos! Eos quia ipsam quo reprehenderit impedit quo praesentium odit ex debitis galisum est deserunt ipsa est quibusdam dignissimos eum consequuntur dignissimos. Et repellendus voluptatem sed dolorem facere et omnis rerum aut exercitationem quia ut facilis beatae.</p>
+            </div>            
+            <div id="summaryPanel" data-height="90%" class="container W-100 hiddenTopPanel" data-th-if="${navComponentData.hasSummary()}" data-th-utext="${navComponentData.summary}" >
+                <div class="d-flex flex-column w-100 h-100">
+                    <div class="d-flex h-100">
+                        <div class="border flex-fill">
+                            
+                        </div>
+                        <div class="d-flex flex-column flex-fill">
+                             
+                        </div>
+                        <div class="border d-flex flex-column flex-fill">
+                            <div class="border flex-fill">
+                                
+                            </div>
+                            <div class="border flex-fill">
+                               
+                            
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex h-100"> 
+                        <div class="border flex-fill"></div>
+                        <div class="border flex-fill"></div>
+                    </div>
+                </div>            
+            </div>            
+            <div id="explanatoryVideoPanel" class="hiddenTopPanel" data-th-if="${navComponentData.hasExplanatoryVideo()}">
+                 <iframe  data-th-src="${navComponentData.video.url}" data-th-width="${navComponentData.video.width}" 
+                        src="https://www.youtube.com/embed/tgbNymZ7vqY" allowfullscreen>
+                </iframe> 
+            </div>   
+       <!--/*/ <th:block th:if="${activityComponent!=null}"> /*/-->
+        <div id='mainContainer' class="container-fluid W-100 d-flex h-100" data-th-replace='${activityComponent.templateName} :: ${activityComponent.getFragmentName()}'>
+            main
+        </div>   
+       <!--/*/ </th:block> /*/-->
+    </main>
+    <footer data-th-fragment="footer">
+        <div id="rightFooter">
+          <span class="footer_credits">Recurs didàctic dissenyat pel grup de millora en metodologies flexibles de l'IOC</span>
+           <img alt='logo wiki' id='logo_bottom' src='./img/logo_ra.png'/>
+        </div>
+        <div id="leftFooter">
+          <span id="infoMessagePanel" class="footer_info"> </span>
+        </div>
+    </footer>
+    <!--/*/ <th:block th:if="${mefConfigComponents!=null}"> /*/--> 
+    <mef-config data-th-each='attributeMap : ${mefConfigComponents}' data-th-attr="__${attributeMap}__" ></mef-config>
+    <!--/*/ </th:block> /*/-->
+    
+    <!--/*/ <th:block th:if="${moduleSelectors!=null}"> /*/--> 
+    <!--/*/ <th:block th:insert="mef/mef_modules :: [script[__${moduleSelectors}__]]"> /*/-->             
+    <!--/*/ </th:block> /*/-->  
+    <!--/*/ </th:block> /*/-->    
+  </body>
+</html>

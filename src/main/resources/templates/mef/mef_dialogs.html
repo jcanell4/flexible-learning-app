@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ca">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">	
+    <link rel="stylesheet" href="plact/css/mef.css">
+
+    <script src="plact/js/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="plact/js/modules/main/mef.js" type="module"></script>
+    <!--/*/ <th:block th:fragment="headScript"> /*/>
+    <script src="plact/js/modules/main/dialog.js" type="module"></script>
+    <!--/*/ </th:block> /*/-->
+  </head>
+  <body>
+    <div data-th-replace="pl_base_act.html :: header">
+        <header class="fp">
+            <div class='d-flex flex-row'>
+                <!--logo-->
+                <img alt='logo' id='logo' src='plact/img/logo.png'/>
+            </div>
+        </header>
+    </div>
+    <main class="d-flex justify-content-center">
+      <div>  
+      <button type="button" class="btn btn-info btn-lg" id="buttonDialogBaseCenter">Obrir Modal "dialogBaseCenter!</button>
+      <p>MAIN</p>
+      </div>
+       <div data-th-fragment="dialogBaseCenter" data-th-id="${dialog.id}" id="dialogBaseCenter" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" data-th-text="${dialog.title}">Modal title</h5>
+                  <button data-th-if="${dialog.canClose}" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <p data-th-each="paragraph: ${dialog.message}" data-th-text="${paragraph}">Modal body text goes here.</p>
+                </div>
+                <div class="modal-footer">
+                    <button data-th-each="button: ${dialog.buttons}" data-th-id="${button.id}" type="button" class="btn btn-primary" data-action="${button.action}" data-dismiss="modal" data-th-attr="onclick=|${onclick}('${button.action}')|, data-dismiss=${button.closeDialogOnClick ? 'modal' : null}" data-th-text="${button.text}">Close</button>
+                </div>
+              </div>
+            </div>
+        </div>
+    </main>
+    <footer>Footer</footer>
+    <script>
+        $(document).ready(function(){
+          $("#buttonDialogBaseCenter").click(function(){
+            LibDialog.showModal("dialogBaseCenter")
+          });
+        });
+    </script>
+    <script data-th-fragment="bodyScript" src="plact/js/modules/main/dialog.js" type="module"></script>
+  </body>
+</html>

@@ -1,0 +1,134 @@
+.splitcontainer {
+	background: transparent;
+	margin: 0px;
+	padding: 0px;
+	
+	/*//	prefixes generated with: http://autoprefixer.github.io*/
+	-webkit-box-flex: 1;
+	-ms-flex: 1 1 auto;
+	flex: 1 1 auto;
+			
+	/*// for the child elements:*/
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	
+	-webkit-box-orient: horizontal;
+	-webkit-box-direction: normal;
+	-ms-flex-direction: row;
+	flex-direction: row;	
+	overflow: auto;
+}
+
+.splitcontainer.horizontal {
+	-webkit-box-orient: horizontal;
+	-webkit-box-direction: normal;
+	-ms-flex-direction: row;
+	flex-direction: row;	
+}
+
+.splitcontainer.vertical {
+	-webkit-box-orient: vertical;
+	-webkit-box-direction: normal;
+	-ms-flex-direction: column;
+	flex-direction: column;
+}
+
+.splitcontainer.outline {
+	outline: 1px dashed blue;
+}
+
+
+.splitpanel {
+	background: transparent;
+	padding: 0px;
+	min-width: 5;
+	min-height: 5;
+	
+	-webkit-box-flex: 0;
+	-ms-flex: 0 0 auto;
+	flex: 0 0 auto;
+	
+	/* for the child elements: */
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: flex;
+	
+	-webkit-box-orient: horizontal;
+	-webkit-box-direction: normal;
+	-ms-flex-direction: row;
+	flex-direction: row;
+	overflow: auto;
+}
+
+.splitpanel.outline {
+	outline: 1px dashed red;
+}
+
+.splitpanel.leftpanel {
+	/*the min-width option is set in the veetsplit.js*/
+}
+
+.splitpanel.rightpanel {
+	-webkit-box-flex: 1;
+	-ms-flex: 1 1 auto;
+	flex: 1 1 auto;	
+}
+
+.splitpanel.toppanel {
+	/*the min-height option is set in the veetsplit.js*/
+}
+
+.splitpanel.bottompanel {
+	-webkit-box-flex: 1;
+	-ms-flex: 1 1 auto;
+	flex: 1 1 auto;	
+}
+
+.splitter {
+	background: rgba(220,220,220,1);
+	background-repeat: no-repeat;
+	background-position: 50%;
+	
+	-webkit-box-flex: 0;
+	-ms-flex: 0 0 auto;
+	flex: 0 0 auto;
+}
+
+.splitter.column {
+	left:100px;
+	width:3px;
+	min-width: 2px;
+	cursor: col-resize;
+	background-image: url('../img/vgripsm.png');
+        margin-top: 0;
+        margin-bottom: 0;
+}
+
+.splitter.row {
+	top:100px;
+	height:3px;
+	min-height: 2px;
+	cursor: row-resize;
+	background-image: url('../img/hgripsm.png');
+        margin-left: 0;
+        margin-right: 0;
+}
+
+.splitpanel.dockleft {
+	min-width: 30px;
+}
+
+.splitpanel.docktop {
+	min-height: 30px;
+}
+
+.splitpanel.dockright {
+	min-width: 30px;
+	margin-left: auto;
+}
+
+.splitpanel.dockbottom {
+	min-height: 30px;
+	margin-top: auto;
+}

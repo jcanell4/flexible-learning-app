@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ca">
+  <head>
+    <!-- Required meta tags -->
+    <!--/*/ <th-block > /*/-->
+    <meta charset="utf-8">
+    <!--/*/ </th-block> /*/-->
+
+    <!--/*/ <th-block > /*/-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="./css/mef.css">
+    <!--/*/ </th-block> /*/-->
+    <link rel="stylesheet" href="./css/veetsplit.css">
+    <link rel="stylesheet" href="./css/codemirror.css">
+    <link rel="stylesheet" href="./css/activity.css">
+
+    <!--/*/ <th-block > /*/-->
+    <script src="./js/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <!--/*/ </th-block> /*/-->
+    <script src="./js/veetsplit.js"></script>
+    <script src="./js/codemirror/codemirror.js"></script>
+    <script src="./js/codemirror/addon/selection/active-line.js"></script>
+    <script src="./js/codemirror/addon/edit/closebrackets.js"></script>
+    <script src="./js/codemirror/addon/edit/matchtags.js"></script>
+    <script src="./js/codemirror/addon/edit/closetag.js"></script>
+    <script src="./js/codemirror/addon/fold/xml-fold.js"></script>
+    <script src="./js/codemirror/addon/edit/matchbrackets.js"></script>
+    <script src="./js/codemirror/addon/mode/loadmode.js"></script>  
+  </head>
+  <body>
+    <div >
+        <header class="fp">
+            <div class='d-flex flex-row'>
+                <!--logo-->
+                <img alt='logo' id='logo' src='./img/logo.png'/>
+            </div>
+        </header>
+    </div>
+    <main class="d-flex justify-content-center">
+        <div id='mainContainer' class="container-fluid W-100 d-flex h-100">
+            <div class="splitcontainer horizontal ">
+                    <div class="splitpanel leftpanel ">
+                        <div class="splitcontainer vertical ">
+                            <div class="splitpanel toppanel text_container" data-th-utext="${activity.statement}">Enunciat detallat del programa a realitzar</div>
+                            <div id="splitterHorl" class="splitter row"></div>
+                            <div class="splitpanel bottompanel flex-column text_container">
+                                <ol>
+                                    <li data-th-each="instruction: ${activity.getInstructions()}" data-th-utext="${instruction}"></li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="splitterVert" class="splitter column"></div>
+                    <div class="splitpanel rightpanel ">
+                        <div id="rigtcontainer" class="splitcontainer vertical ">
+                            <div class="splitpanel toppanel " style="height:calc(100% - 57px);">
+                                <div id="toolcontainer" class="splitcontainer vertical ">
+                                    <div class="splitpanel toppanel ">
+                                        <div class="editorContainer" data-th-style="'font-size: '+${activity.editor.fontsize}+'px;'">
+                                            <form id="editorForm" action= "sendWriting" method="post"  data-on-load-replace-id="dialogArea" data-after-loading='dialog.showModal("dialog")'>
+                                                <textarea id="editor" name="editor" data-th-text="${activity.getEditor().getDefaultText()}"></textarea>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <div id="splitterHorr" class="splitter row"></div>
+                                    <div class="splitpanel bottompanel text_container">
+                                        <div class="d-flex flex-column w-100">
+                                            <div class="consoleContainer" data-th-style="'font-size: '+${activity.editor.fontsize}+'px;'">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="splitpanel dockbottom split_bottom" style="height:57px;">
+                                <div class="controlBar d-flex flex-column w-100">
+                                    <!--div class="d-flex flex-column w-100"-->
+                                    <div class="d-flex flex-row-reverse">
+                                        <span>
+                                            <button form="editorForm" type="submit" id="sendButton" class="submitButton">
+                                                Enviar per qualificar
+                                            </button>
+                                        </span>
+                                        <!--/*/ <th:block th:if="${clueComponent!=null}"> /*/--> 
+                                        <span>
+                                            <button form="clueForm" type="submit" id="clueButton" class="clickableButton">
+                                                Demanar pistes
+                                            </button>
+                                        </span>
+                                        <!--/*/ </th:block> /*/-->                                        
+                                    </div>
+                                    <!--/div-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+        </div>
+        <!--/*/ <th:block th:if="${clueComponent!=null}"> /*/--> 
+        <form id="clueForm" action="nextClue" method="post" data-on-load-replace-id="clueForm" data-after-loading="clues.viewClueContent">
+            <div class="invisible" id="clueDataGroup" data-th-fragment="clueDataGroup">
+                <input type="hidden" name="nextClue" data-th-value="${activity.currentClue.id}" value="0"/>
+                <div data-th-title="'Pista n. '+${activity.currentClue.id}" data-th-id="'clueContent_'+${activity.currentClue.id}" id="clueContent" class="clueContent closed" data-th-attr="data-info-message=${infoMessage}" data-info-message="Pista carregada">
+                    <div>
+                        <div class="chevron right invisible" data-th-attr="onclick=|mefData.clues.closeClueContent(this.parentNode.parentNode)|" onclick="mefData.clues.closeClueContent()"> 
+                        </div>
+                        <div class="chevron left" data-th-attr="onclick=|mefData.clues.openClueContent(this.parentNode.parentNode)|" onclick="mefData.clues.openClueContent()"> 
+                        </div>                            
+                    </div>
+                    <div class="clue" data-th-utext="${activity.currentClue.content}">        
+                    </div>                        
+                </div>
+            </div>
+        </form>
+        <!--/*/ </th:block> /*/-->                                        
+        <div id="dialogArea">            
+        </div>
+    </main>
+    <footer data-th-replace="pl_base_act.html :: footer">Footer</footer>
+    <!-- timer -->
+   <mef-timer id='mainTimer' data-time="5000" data-url="autoTimerFeedback" data-data-object="timerObjectData" data-request-method="POST" data-callable-object="actions"></mef-timer>
+    <!-- codemirror mode -->
+    <mef-mode data-th-if="${activity.getEditor() instanceof T(org.elsquatrecaps.flexiblelearning.viewdata.learningproposal.activity.CodeEditor)}" id='codemirrorMode' data-th-attr="data-mode-url=@{./js/codemirror/mode/{name}/{name}.js(name=${activity.getEditor().getMode()})},data-mode-name=${activity.getEditor().getMode()}" data-mode-url="./js/codemirror/mode/javascript/javascript.js" data-mode-name="javascript" data-bind=""></mef-mode>
+   <!-- js -->
+    <script src="./js/modules/main/code.js" type="module"></script>
+    <script src="./js/modules/main/dialog.js" type="module"></script>
+  </body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+table td{
+vertical-align:top;
+border:solid 1px #888;
+padding:10px;
+}
+
+    </style>
+</head>
+<body>
+<h1>My Thymeleaf Error Page</h1>
+<table>
+    <tr>
+        <td>Date</td>
+        <td data-th-text="${timestamp}"/>
+    </tr>
+    <tr>
+        <td>Path</td>
+        <td data-th-text="${path}"/>
+    </tr>
+    <tr>
+        <td>Error</td>
+        <td data-th-text="${error}"/>
+    </tr>
+    <tr>
+        <td>Status</td>
+        <td data-th-text="${status}"/>
+    </tr>
+    <tr>
+        <td>Message</td>
+        <td data-th-text="${message}"/>
+    </tr>
+    <tr>
+        <td>Exception</td>
+        <td data-th-text="${exception}"/>
+    </tr>
+    <tr>
+        <td>Trace</td>
+        <td>
+            <pre data-th-text="${trace}"/>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
