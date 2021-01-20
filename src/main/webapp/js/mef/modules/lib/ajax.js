@@ -34,7 +34,14 @@ function getAjaxObject(){
     }
     
     var ajaxObject = {
-        load:function(selector, url, method, data, complete){
+        load:function(selector, url, method, data, complete, onError){
+            var _loadWithError = function( /*String*/ responseText, /*String*/ textStatus, /*jqXHR*/ jqXHR ){
+                if(jqXHR.status>=400){
+                    onError({responseJSON:{error:""+ jqXHR.status + " HTTP Error", message:jqXHR.statusText}} );
+                }else{
+                    complete(responseText, textStatus, jqXHR);
+                }
+            };
             var ret;
             if((typeof method!=="string")
                     || !["GET", "POST"].includes(method.toUpperCase())){
@@ -43,9 +50,9 @@ function getAjaxObject(){
                 method = "GET";
             }
             if(method.toUpperCase()==="GET"){
-                ret = $(selector).load(__getUrl(url), data, complete);
+                ret = $(selector).load(__getUrl(url), data, _loadWithError);
             }else{
-                var prop = __buildProp(url, method, data, complete);
+                var prop = __buildProp(url, method, data, complete, onError);
                 ret = $.ajax(prop).done(function(response){
                     $(selector).html(response);
                 });

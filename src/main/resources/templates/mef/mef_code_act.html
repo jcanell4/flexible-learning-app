@@ -84,6 +84,8 @@
                                             </button>
                                         </span>
                                         <!--/*/ <th:block th:if="${clueComponent!=null}"> /*/--> 
+                                        <!--/*/ <th:block th:replace='${clueComponent.templateName} :: ${clueComponent.getFragmentName("clueButton")}'> /*/-->             
+                                        <!--/*/ </th:block> /*/-->  
                                         <!--/*/ </th:block> /*/-->                                        
                                     </div>
                                     <!--/div-->
@@ -94,6 +96,8 @@
             </div>
         </div>
         <!--/*/ <th:block th:if="${clueComponent!=null}"> /*/--> 
+        <!--/*/ <th:block th:replace='${clueComponent.templateName} :: ${clueComponent.getFragmentName("clueForm")}'> /*/-->             
+        <!--/*/ </th:block> /*/-->  
         <!--/*/ </th:block> /*/-->                                        
         <div id="dialogArea">            
         </div>

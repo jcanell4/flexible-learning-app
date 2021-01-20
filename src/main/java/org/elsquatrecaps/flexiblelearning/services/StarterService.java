@@ -20,23 +20,22 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 import javax.annotation.PostConstruct;
-import org.elsquatrecaps.flexiblelearning.learningproposal.LearningProposalConfiguration;
 import org.elsquatrecaps.flexiblelearning.learningstate.LearningState;
 import org.elsquatrecaps.flexiblelearning.persistence.ActivityRepository;
+import org.elsquatrecaps.flexiblelearning.persistence.ClueSetConfigRepository;
 import org.elsquatrecaps.flexiblelearning.persistence.LearningProposalRepository;
 import org.elsquatrecaps.flexiblelearning.persistence.LearningStateRepository;
-import org.elsquatrecaps.flexiblelearning.viewcomposer.BaseResponseViewComposer;
 import org.elsquatrecaps.flexiblelearning.viewcomposer.ResponseViewComposer;
 import org.elsquatrecaps.flexiblelearning.viewcomposer.ResponseViewComposerfactory;
-import org.elsquatrecaps.flexiblelearning.viewcomposer.components.ResponseViewComponent;
 import org.elsquatrecaps.flexiblelearning.viewcomposer.components.ResponseViewConfigData;
 import org.elsquatrecaps.mef.learningproposal.MefActivityConfiguration;
 import org.elsquatrecaps.mef.learningproposal.MefLearningProposalConfiguration;
-import org.elsquatrecaps.mef.templates.viewcomposer.components.codeeditor.CodeActivity;
 import org.elsquatrecaps.mef.templates.viewcomposer.components.codeeditor.MefCodeEditorModeConfig;
+import org.elsquatrecaps.mef.templates.viewcomposer.components.miscelanea.MefClueComponent;
+import org.elsquatrecaps.mef.templates.viewcomposer.components.miscelanea.MefClueConfigData;
+import org.elsquatrecaps.mef.templates.viewcomposer.components.miscelanea.MefTimerConfig;
 import org.elsquatrecaps.mef.templates.viewcomposer.template.ItemResource;
 import org.elsquatrecaps.mef.templates.viewcomposer.components.progessbar.ProgressBarNode;
-import org.elsquatrecaps.mef.templates.viewcomposer.components.progessbar.ProgressBarState;
 import org.elsquatrecaps.mef.templates.viewcomposer.template.VideoResource;
 import org.elsquatrecaps.mef.templates.viewcomposer.components.progessbar.MefLinialProgressbarComponent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +56,8 @@ public class StarterService {
     LearningProposalRepository learningProposalRepository;
     @Autowired 
     ActivityRepository activityRepository;
+    @Autowired 
+    ClueSetConfigRepository clueSetConfigRepository;
 
     public StarterService() {
     }
@@ -136,7 +137,7 @@ public class StarterService {
         lp.getResponseViewConfigData().addRelatedResourceToNavElement(new ItemResource("url/recurs.1", "Recurs 1"));
         lp.getResponseViewConfigData().addRelatedResourceToNavElement(new ItemResource("url/recurs.2", "Recurs 2"));
         lp.getResponseViewConfigData().addRelatedResourceToNavElement(new ItemResource("url/recurs.3", "Recurs 3"));
-        lp.getResponseViewConfigData().setLearningProposalNameToNavElement("Mira el món! Sents la vida?");   
+        lp.getResponseViewConfigData().setLearningProposalNameToNavElement("Mira el món! Tot és codi?");   
         
         MefLinialProgressbarComponent pbc = new MefLinialProgressbarComponent();
         for(int i=1; i<=10; i++){
@@ -170,11 +171,19 @@ public class StarterService {
                 + "");
         mefActivityConfiguration.getResponseViewComponent().
                 getConfigComponentElements().add(
+                        new MefTimerConfig(5000, "autoTimerFeedback"));
+        mefActivityConfiguration.getResponseViewComponent().
+                getConfigComponentElements().add(
                         new MefCodeEditorModeConfig(mefActivityConfiguration.
                                 getResponseViewComponent().getCodeActivity().
                                 getEditor().getMode()));
+        MefClueComponent mefClueComponent = new MefClueComponent("cls-001");
+        mefClueComponent.getClueConfigData().addAllowedClueIteratorType("SequentialClueIterator");
+        
+        mefActivityConfiguration.getResponseViewComponent().getComponentMap().put("clueComponent", mefClueComponent);
         
         activityRepository.save(mefActivityConfiguration);
+
     }
     
     public ModelAndView start(String studentId, String learningProposalId){
@@ -183,17 +192,19 @@ public class StarterService {
         LearningState ls = getLearningState(studentId, learningProposalId);
         MefLearningProposalConfiguration lp = getLearningProposalConfiguration(learningProposalId);
         MefActivityConfiguration ac = getActivityConfiguration(ls.getCurrentActivityId());
-        modelAndView = getModelFromLearningProposalConfiguration(lp, ac);
+        modelAndView = getModelFromLearningProposalConfiguration(lp, ac, ls);
         return modelAndView;
     }
     
     
     private ModelAndView getModelFromLearningProposalConfiguration(
             MefLearningProposalConfiguration learningProposalConfiguration, 
-            MefActivityConfiguration activityConfiguration){
+            MefActivityConfiguration activityConfiguration,
+            LearningState learningState){
         ModelAndView model;
         ResponseViewConfigData configData = learningProposalConfiguration.getResponseViewConfigData();
         ResponseViewComposer responseViewComposer = ResponseViewComposerfactory.getResponseViewComposerInstance(configData);
+        responseViewComposer.addAdditionalData("learningState", learningState);
         model = responseViewComposer.getResponseView();
         ResponseViewConfigData activityConfigData = activityConfiguration.getResponseViewComponent();
         

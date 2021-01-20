@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-import getAjaxObject from './lib/ajax.js'
+import getAjaxObject from './lib/ajax.js';
+import LibTemplate from './lib/GlobalLibTemplate.js'
+
 
 function getNavManager(){
     var libNav={
@@ -174,54 +176,57 @@ function getNavManager(){
     return libNav;
 }
 
-function getUtilities(){
-    var utils={
-        callMethod:function(obj, call, params){
-            var length, propObj, props, aMethod, ret;
+//function getUtilities(){
+//    var utils={
+//        callMethod:function(obj, call, params){
+//            var length, propObj, props, aMethod, ret;
+//
+//            propObj = obj;
+//            props = call.split(".");
+//            length=props.length-1;
+//            for(var i=0; i<length; i++){
+//                propObj = propObj[props[i]];
+//            }
+//
+//            aMethod = /(^\w*)(\((.*)\))?/.exec(props[length]);
+//            if(aMethod[3]){
+//                var aparams = JSON.parse("["+aMethod[3]+"]");
+//                ret = propObj[aMethod[1]](aparams);
+//            }else{
+//                if(params){
+//                    ret = propObj[aMethod[1]](params);
+//                }else{
+//                    ret = propObj[aMethod[1]]();
+//                }
+//            }
+//            return ret;
+//        },
+//        getProperty:function(obj, property){
+//            var propObj, props;
+//
+//            propObj = obj;
+//            props = property.split(".");
+//            for(var i=0; i<props.length; i++){
+//                propObj = propObj[props[i]];
+//            }
+//            return propObj;
+//        }
+//    };
+//    return utils;
+//}
 
-            propObj = obj;
-            props = call.split(".");
-            length=props.length-1;
-            for(var i=0; i<length; i++){
-                propObj = propObj[props[i]];
-            }
+//var LibTemplate = {
+//    libNav: getNavManager(),
+//    utils: getUtilities(),
+//    http: getAjaxObject(),
+//    actions:{},
+//    runActionButton: function(action, param){
+//        this.actions[action](param);
+//    }
+//};
 
-            aMethod = /(^\w*)(\((.*)\))?/.exec(props[length]);
-            if(aMethod[3]){
-                var aparams = JSON.parse("["+aMethod[3]+"]");
-                ret = propObj[aMethod[1]](aparams);
-            }else{
-                if(params){
-                    ret = propObj[aMethod[1]](params);
-                }else{
-                    ret = propObj[aMethod[1]]();
-                }
-            }
-            return ret;
-        },
-        getProperty:function(obj, property){
-            var propObj, props;
-
-            propObj = obj;
-            props = property.split(".");
-            for(var i=0; i<props.length; i++){
-                propObj = propObj[props[i]];
-            }
-            return propObj;
-        }
-    };
-    return utils;
-}
-
-var LibTemplate = {
-    libNav: getNavManager(),
-    utils: getUtilities(),
-    http: getAjaxObject(),
-    actions:{},
-    runActionButton: function(action, param){
-        this.actions[action](param);
-    }
-};
+LibTemplate.libNav = getNavManager();
+LibTemplate.setHttpLib(getAjaxObject());
 
 const global = (0,eval)("this");
 global.mefData = LibTemplate;
@@ -267,6 +272,12 @@ $(document).ready(function(){
                             $infoNode.text("Error: " + err.message);
                         }
                     }
+                }, function(errorResponse){
+                    var $infoNode = $("#infoMessagePanel");
+                    $infoNode.removeClass("success");
+                    $infoNode.removeClass("info");
+                    $infoNode.addClass("error");
+                    $infoNode.text("Error: " + errorResponse.responseJSON.error + " " + errorResponse.responseJSON.message); 
                 }); 
             
         }else{     
@@ -285,4 +296,4 @@ $(document).ready(function(){
     });
 });
 
-export {LibTemplate as default, getNavManager, getUtilities};
+export {LibTemplate as default, getNavManager};

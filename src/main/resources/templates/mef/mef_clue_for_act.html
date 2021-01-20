@@ -83,7 +83,7 @@
                                             </button>
                                         </span>
                                         <!--/*/ <th:block th:if="${clueComponent!=null}"> /*/--> 
-                                        <span>
+                                        <span data-th-fragment="clueButton">
                                             <button form="clueForm" type="submit" id="clueButton" class="clickableButton">
                                                 Demanar pistes
                                             </button>
@@ -97,23 +97,23 @@
                     </div>
             </div>
         </div>
-        <!--/*/ <th:block th:if="${clueComponent!=null}"> /*/--> 
-        <form id="clueForm" action="nextClue" method="post" data-on-load-replace-id="clueForm" data-after-loading="clues.viewClueContent">
+        <form id="clueForm" action="nextClue" method="post" data-on-load-replace-id="clueForm" data-after-loading="clues.viewClueContent" data-th-fragment="clueForm">
             <div class="invisible" id="clueDataGroup" data-th-fragment="clueDataGroup">
-                <input type="hidden" name="nextClue" data-th-value="${activity.currentClue.id}" value="0"/>
-                <div data-th-title="'Pista n. '+${activity.currentClue.id}" data-th-id="'clueContent_'+${activity.currentClue.id}" id="clueContent" class="clueContent closed" data-th-attr="data-info-message=${infoMessage}" data-info-message="Pista carregada">
+                <input type="hidden" name="clueId" data-th-value="${clueComponentData.currentClue.id}" value="0000"/>
+                <input type="hidden" name="clueSetId" data-th-value="${clueComponentData.clueSetId}" value="0000"/>
+                <input type="hidden" name="clueIteratorType" data-th-value="${clueComponentData.clueIteratorType}" value="default"/>
+                <div data-th-title="'Pista '+${clueComponentData.currentClue.id}" data-th-id="'clueContent_'+${clueComponentData.currentClue.id}" id="clueContent" class="clueContent closed" data-th-attr="data-info-message=${clueComponentData.infoMessage}" data-info-message="Pista carregada">
                     <div>
                         <div class="chevron right invisible" data-th-attr="onclick=|mefData.clues.closeClueContent(this.parentNode.parentNode)|" onclick="mefData.clues.closeClueContent()"> 
                         </div>
                         <div class="chevron left" data-th-attr="onclick=|mefData.clues.openClueContent(this.parentNode.parentNode)|" onclick="mefData.clues.openClueContent()"> 
                         </div>                            
                     </div>
-                    <div class="clue" data-th-utext="${activity.currentClue.content}">        
+                    <div class="clue" data-th-utext="${clueComponentData.currentClue.content}">        
                     </div>                        
                 </div>
             </div>
         </form>
-        <!--/*/ </th:block> /*/-->                                        
         <div id="dialogArea">            
         </div>
     </main>

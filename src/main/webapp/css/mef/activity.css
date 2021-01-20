@@ -160,12 +160,12 @@ and open the template in the editor.
 }
 
 .clueContent .chevron.right{
-    background-image: url('../img/chevron-right.svg');
+    background-image: url('../../img/chevron-right.svg');
     background-repeat: no-repeat;
 }
 
 .clueContent .chevron.left{
-    background-image: url('../img/chevron-left.svg');
+    background-image: url('../../img/chevron-left.svg');
     background-repeat: no-repeat;
 }
 

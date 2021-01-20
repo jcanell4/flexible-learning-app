@@ -1,21 +1,20 @@
 import getClueManager from "./lib/clues.js";
-//import LibTemplate, {getRequestTimersManager, RequestTimerClass} from "./mef.js";
+import RequestTimerClass, {getRequestTimersManager, TimerDataConfig} from "./lib/requestTimer.js";
 import LibTemplate from "./mef.js";
 
 
 
-LibTemplate.timerObjectData = {
+LibTemplate.timerObjectData = new TimerDataConfig();
+Object.assign(LibTemplate.timerObjectData, {
     timeLapsed:0,
-    clueId:0,
     counter: 0,
-    editor:null,
-    getDataToSend:function(){            
-        this.counter++;
-        return {"editor": this.editor.getDoc().getValue(), "clueId": this.clueId, "counter": this.counter, "timeLapsed":this.timeLapsed};
+    getDataToSend : function(){            
+        this.counter++;  
+        return {"editor": this.editor.getDoc().getValue(), "counter": this.counter, "timeLapsed":this.timeLapsed};
     }
-};
+});
 
-LibTemplate.actions = {
+Object.assign(LibTemplate.actions, {
     nextActivity:function(param){
         console.log('LibTemplate#nextActivity('+param+')');
     },
@@ -27,11 +26,12 @@ LibTemplate.actions = {
         LibTemplate.timerObjectData.clueId=remoteParams.nextId;
         LibTemplate.clues.viewClueContent(localParams.onLoadReplaceId);
     }
-};
+});
+
     
 LibTemplate.clues=getClueManager();
 
-//LibTemplate.utils.requestTimers = getRequestTimersManager();
+LibTemplate.utils.requestTimers = getRequestTimersManager();
 
 veet.split.setSplit('splitterVert',{splitterSize:'10',startPosition:'25',minSizePanel1:'10',minSizePanel2:'15',fixedPanel2:true});
 veet.split.setSplit('splitterHorl',{splitterSize:'10',startPosition:'50',minSizePanel1:'10',minSizePanel2:'15',fixedPanel2:true});
@@ -107,27 +107,28 @@ editor.on("mousedown", function(event){
 
 LibTemplate.timerObjectData.editor=editor;
 $(document).ready(function(){
-//    $("mef-timer").each(function(){
-//        var id, 
-//            t = new RequestTimerClass(
-//                $(this).data("time"),
-//                $(this).data("url"),
-//                $(this).data("dataObject"),
-//                $(this).data("requestMethod"),
-//                $(this).data("callableObject"),
-//                $(this).data("getDataToSend"),
-//                {"onLoadReplaceId":"clueForm"},
-//                LibTemplate
-//        );     
-//        t.run();
-//        id = this.id;
-//        LibTemplate.utils.requestTimers.setTimer(id, t);
-//        LibTemplate.timerObjectData.timeLapsed=$(this).data("time");
-//        editor.on("change", function(event){
-//            LibTemplate.clues.closeAllClues();
-//            LibTemplate.utils.requestTimers.getTimer(id).restart();
-//        });
-//    }); 
+    $("mef-config[data-type='timer']").each(function(){
+        var id, 
+            t = new RequestTimerClass(
+                $(this).data("time"),
+                $(this).data("url"),
+                $(this).data("dataObject"),
+                $(this).data("requestMethod"),
+                $(this).data("callableObject"),
+                $(this).data("getDataToSend"),
+                {"onLoadReplaceId":"clueForm"},
+                LibTemplate
+        );     
+        t.run();
+        id = this.id;
+        LibTemplate.utils.requestTimers.setTimer(id, t);
+        LibTemplate.timerObjectData.timeLapsed=$(this).data("time");
+        editor.on("change", function(event){
+            LibTemplate.clues.closeAllClues();
+            LibTemplate.utils.requestTimers.getTimer(id).restart();
+        });
+    }); 
+    
     var $mefModeElement = $("mef-config#codemirrorMode").first();
     if($mefModeElement && $mefModeElement.data("modeName")){     
         CodeMirror.modeURL = $mefModeElement.data("modeUrl")?$mefModeElement.data("modeUrl"):"./js/codemirror/mode/%N/%N.js";
