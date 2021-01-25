@@ -17,29 +17,23 @@ package org.elsquatrecaps.flexiblelearning.services;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Supplier;
 import javax.annotation.PostConstruct;
 import org.elsquatrecaps.flexiblelearning.learningstate.LearningState;
 import org.elsquatrecaps.flexiblelearning.persistence.ActivityRepository;
 import org.elsquatrecaps.flexiblelearning.persistence.ClueSetConfigRepository;
 import org.elsquatrecaps.flexiblelearning.persistence.LearningProposalRepository;
 import org.elsquatrecaps.flexiblelearning.persistence.LearningStateRepository;
-import org.elsquatrecaps.flexiblelearning.viewcomposer.ResponseViewComposer;
-import org.elsquatrecaps.flexiblelearning.viewcomposer.ResponseViewComposerfactory;
-import org.elsquatrecaps.flexiblelearning.viewcomposer.components.ResponseViewConfigData;
+import org.elsquatrecaps.flexiblelearning.starter.MefStarterManager;
 import org.elsquatrecaps.mef.learningproposal.MefActivityConfiguration;
 import org.elsquatrecaps.mef.learningproposal.MefLearningProposalConfiguration;
 import org.elsquatrecaps.mef.templates.viewcomposer.components.codeeditor.MefCodeEditorModeConfig;
 import org.elsquatrecaps.mef.templates.viewcomposer.components.miscelanea.MefClueComponent;
-import org.elsquatrecaps.mef.templates.viewcomposer.components.miscelanea.MefClueConfigData;
 import org.elsquatrecaps.mef.templates.viewcomposer.components.miscelanea.MefTimerConfig;
 import org.elsquatrecaps.mef.templates.viewcomposer.template.ItemResource;
 import org.elsquatrecaps.mef.templates.viewcomposer.components.progessbar.ProgressBarNode;
 import org.elsquatrecaps.mef.templates.viewcomposer.template.VideoResource;
 import org.elsquatrecaps.mef.templates.viewcomposer.components.progessbar.MefLinialProgressbarComponent;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -49,7 +43,8 @@ import org.springframework.web.servlet.ModelAndView;
  */
 
 @Service
-public class StarterService {
+public class AppService{
+    MefStarterManager starterManager;
     @Autowired 
     LearningStateRepository learningStateRepository;
     @Autowired 
@@ -59,11 +54,11 @@ public class StarterService {
     @Autowired 
     ClueSetConfigRepository clueSetConfigRepository;
 
-    public StarterService() {
-    }
+    public AppService() {}
 
     @PostConstruct
     public void init(){
+        //Simulació de les dades de la base de dades
         MefLearningProposalConfiguration lp;
         LearningState ls;
         learningStateRepository.deleteAll();
@@ -183,93 +178,17 @@ public class StarterService {
         mefActivityConfiguration.getResponseViewComponent().getComponentMap().put("clueComponent", mefClueComponent);
         
         activityRepository.save(mefActivityConfiguration);
+        //FI de la simulació de dades
+        
+        //Codi de l'init
+        starterManager = new MefStarterManager();
+        starterManager.init(learningStateRepository, learningProposalRepository, activityRepository);
 
     }
     
     public ModelAndView start(String studentId, String learningProposalId){
         ModelAndView modelAndView = null;
-        
-        LearningState ls = getLearningState(studentId, learningProposalId);
-        MefLearningProposalConfiguration lp = getLearningProposalConfiguration(learningProposalId);
-        MefActivityConfiguration ac = getActivityConfiguration(ls.getCurrentActivityId());
-        modelAndView = getModelFromLearningProposalConfiguration(lp, ac, ls);
+        modelAndView = starterManager.start(studentId, learningProposalId);
         return modelAndView;
     }
-    
-    
-    private ModelAndView getModelFromLearningProposalConfiguration(
-            MefLearningProposalConfiguration learningProposalConfiguration, 
-            MefActivityConfiguration activityConfiguration,
-            LearningState learningState){
-        ModelAndView model;
-        ResponseViewConfigData configData = learningProposalConfiguration.getResponseViewConfigData();
-        ResponseViewComposer responseViewComposer = ResponseViewComposerfactory.getResponseViewComposerInstance(configData);
-        responseViewComposer.addAdditionalData("learningState", learningState);
-        model = responseViewComposer.getResponseView();
-        ResponseViewConfigData activityConfigData = activityConfiguration.getResponseViewComponent();
-        
-        responseViewComposer.addComponent("activityComponent", activityConfigData, model);
-        
-        
-        return model;
-    }
-    
-    private MefActivityConfiguration getActivityConfiguration(String id){
-        MefActivityConfiguration ret;
-        Optional<MefActivityConfiguration> result=null;
-        result = activityRepository.findById(id);
-         try {
-            ret = result.orElseThrow(new Supplier<Exception>() {
-                @Override
-                public Exception get() {
-                    Exception ex = new RuntimeException("ACTIVITY_NOT_FOUND");
-                    return ex;
-                }
-            });
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-         return ret;
-    }
-    
-    private MefLearningProposalConfiguration getLearningProposalConfiguration(String id){
-        MefLearningProposalConfiguration ret;
-        Optional<MefLearningProposalConfiguration> result=null;
-        result = learningProposalRepository.findById(id);
-         try {
-            ret = result.orElseThrow(new Supplier<Exception>() {
-                @Override
-                public Exception get() {
-                    Exception ex = new RuntimeException("LEARNING_PROPOSAL_NOT_FOUND");
-                    return ex;
-                }
-            });
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-         return ret;
-    }
-    
-    public LearningState getLearningState(String studentId, String learningProposalId){
-        LearningState ret = null;
-        Optional<LearningState> result = null;
-        LearningState examplels = new LearningState(studentId, learningProposalId);
-        result = learningStateRepository.findOne(Example.of(examplels));
-  
-        try {
-            ret = result.orElseThrow(new Supplier<Exception>() {
-                @Override
-                public Exception get() {
-                    Exception ex = new RuntimeException("LEARNING_PROPOSAL_NOT_FOUND");
-                    return ex;
-                }
-            });
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
-       
-        
-        return ret;
-    }
-    
 }

@@ -15,9 +15,7 @@
  */
 package org.elsquatrecaps.flexiblelearning.controllers;
 
-import org.elsquatrecaps.flexiblelearning.learningstate.LearningState;
-import org.elsquatrecaps.flexiblelearning.persistence.LearningStateRepository;
-import org.elsquatrecaps.flexiblelearning.services.StarterService;
+import org.elsquatrecaps.flexiblelearning.services.AppService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Controller;
@@ -32,10 +30,10 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @EnableAutoConfiguration
-public class BaseController {
+public class AppController {
     
     @Autowired 
-    StarterService starterService;
+    AppService starterService;
     
     @RequestMapping("/")
     public String startAct(){
@@ -48,7 +46,7 @@ public class BaseController {
         ModelAndView modelAndView= null;
        
         try {
-//            StarterService starterService = new StarterService(learningStateRepository);
+//            AppService starterService = new AppService(learningStateRepository);
             modelAndView = starterService.start(studentId, learningProposalId);
 //            modelAndView = new ModelAndView("mef/mef_base");
 //            modelAndView.addObject("maindata", "studentId: ".concat(studentId).concat("\n learningProposalId: ").concat(learningProposalId).concat("\n activityId: ").concat(ls.getCurrentActivityId()));

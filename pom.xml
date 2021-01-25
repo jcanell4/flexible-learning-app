@@ -56,6 +56,7 @@
 	  <groupId>org.elsquatrecaps</groupId>
 	  <artifactId>flexible-learning-view-mef</artifactId>
 	  <version>1.0-SNAPSHOT</version>
+	  <type>jar</type>
 	 </dependency>
 	</dependencies>
 
