@@ -23,7 +23,7 @@ import org.elsquatrecaps.flexiblelearning.persistence.ActivityRepository;
 import org.elsquatrecaps.flexiblelearning.persistence.ClueSetConfigRepository;
 import org.elsquatrecaps.flexiblelearning.persistence.LearningProposalRepository;
 import org.elsquatrecaps.flexiblelearning.persistence.LearningStateRepository;
-import org.elsquatrecaps.flexiblelearning.starter.MefStarterManager;
+import org.elsquatrecaps.flexiblelearning.manager.starter.MefStarterManager;
 import org.elsquatrecaps.mef.learningproposal.MefActivityConfiguration;
 import org.elsquatrecaps.mef.learningproposal.MefLearningProposalConfiguration;
 import org.elsquatrecaps.mef.templates.viewcomposer.components.codeeditor.MefCodeEditorModeConfig;

@@ -33,7 +33,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class AppController {
     
     @Autowired 
-    AppService starterService;
+    AppService appService;
     
     @RequestMapping("/")
     public String startAct(){
@@ -46,8 +46,8 @@ public class AppController {
         ModelAndView modelAndView= null;
        
         try {
-//            AppService starterService = new AppService(learningStateRepository);
-            modelAndView = starterService.start(studentId, learningProposalId);
+//            AppService appService = new AppService(learningStateRepository);
+            modelAndView = appService.start(studentId, learningProposalId);
 //            modelAndView = new ModelAndView("mef/mef_base");
 //            modelAndView.addObject("maindata", "studentId: ".concat(studentId).concat("\n learningProposalId: ").concat(learningProposalId).concat("\n activityId: ").concat(ls.getCurrentActivityId()));
         } catch (Exception ex) {

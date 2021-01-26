@@ -2,8 +2,9 @@ package org.elsquatrecaps.flexiblelearning.controllers;
 
 import java.util.Map;
 import java.util.function.BiConsumer;
-import org.elsquatrecaps.flexiblelearning.eventmanager.responses.CallableJavascript;
-import org.elsquatrecaps.flexiblelearning.eventmanager.responses.EventResponse;
+import org.elsquatrecaps.flexiblelearning.manager.event.responses.CallableJavascript;
+import org.elsquatrecaps.flexiblelearning.manager.event.responses.DataEventResponse;
+import org.elsquatrecaps.flexiblelearning.manager.event.responses.EventResponse;
 import org.elsquatrecaps.flexiblelearning.services.AppService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +26,7 @@ public class AppRestController {
     @RequestMapping("/autoTimerFeedback")
     public EventResponse autoFeedback(@RequestParam Map<String, String> eventData){
         StringBuilder p = new StringBuilder();
-        EventResponse ret = new EventResponse();
+        DataEventResponse ret = new DataEventResponse();
         CallableJavascript call = new CallableJavascript();
         p.append("PROVA DEL RequestTimer. Els paràmetres enviats al servidor han estat:\n\n");
         eventData.forEach(new BiConsumer<String, String>() {
