@@ -19,12 +19,14 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import org.elsquatrecaps.flexiblelearning.learningstate.LearningState;
+import org.elsquatrecaps.flexiblelearning.manager.starter.BaseStarterManager;
 import org.elsquatrecaps.flexiblelearning.persistence.ActivityRepository;
 import org.elsquatrecaps.flexiblelearning.persistence.ClueSetConfigRepository;
 import org.elsquatrecaps.flexiblelearning.persistence.LearningProposalRepository;
 import org.elsquatrecaps.flexiblelearning.persistence.LearningStateRepository;
-import org.elsquatrecaps.flexiblelearning.manager.starter.MefStarterManager;
-import org.elsquatrecaps.mef.learningproposal.MefActivityConfiguration;
+import org.elsquatrecaps.flexiblelearning.manager.starter.StarterManager;
+import org.elsquatrecaps.flexiblelearning.viewcomposer.components.ResponseViewComponent;
+import org.elsquatrecaps.mef.learningproposal.MefCodeEditorActivityConfiguration;
 import org.elsquatrecaps.mef.learningproposal.MefLearningProposalConfiguration;
 import org.elsquatrecaps.mef.templates.viewcomposer.components.codeeditor.MefCodeEditorModeConfig;
 import org.elsquatrecaps.mef.templates.viewcomposer.components.miscelanea.MefClueComponent;
@@ -44,7 +46,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Service
 public class AppService{
-    MefStarterManager starterManager;
+    StarterManager starterManager;
     @Autowired 
     LearningStateRepository learningStateRepository;
     @Autowired 
@@ -83,7 +85,7 @@ public class AppService{
         authors.add("Maria José Pedraza");
         authors.add("Joan Ramon Serret");
         lp = new MefLearningProposalConfiguration("lp001", "Proposta d'aprnnetatge per...", "programació, codi, java", authors);
-        lp.getResponseViewConfigData().setInfoTextToNavElement(
+        lp.setInfoTextToNavElement(
 "                <h3>infoooooo</h3> \n" +
 "                <p>Lorem ipsum dolor sit amet. Et minus minima sit voluptatibus repudiandae sed ipsam voluptatem sed similique ratione quaerat vero qui quis molestiae vel corrupti internos! Eos quia ipsam quo reprehenderit impedit quo praesentium odit ex debitis galisum est deserunt ipsa est quibusdam dignissimos eum consequuntur dignissimos. Et repellendus voluptatem sed dolorem facere et omnis rerum aut exercitationem quia ut facilis beatae.</p>\n" +
 "                <p>Ut quod porro sed optio rem culpa voluptatum in distinctio sunt et quae praesentium. Et dolor rerum ab nobis iure est quas minus At pariatur nihil non accusamus nisi 33 ipsam earum et fuga quam? Aut sequi velit aut suscipit consequatur id ipsa enim quo quis sequi.</p>\n" +
@@ -92,7 +94,7 @@ public class AppService{
 "                <p>Aut ipsa perferendis et saepe sint non quia voluptates nam vero quas. Ad perferendis adipisci qui eius velit aut enim sint ea veritatis alias sit vitae ratione aut sint sunt et omnis rerum? Qui vero quibusdam aut quae quod est omnis autem sed praesentium soluta et magni animi.</p>\n" +
 "                <p>Ea illum pariatur ut odio praesentium qui corrupti magnam non aperiam earum. In galisum consequatur et quibusdam odio aut debitis possimus 33 cupiditate praesentium est nihil consequatur. A earum perferendis qui voluptatem atque quo sequi unde id cumque perferendis. Ab magni exercitationem officiis accusantium sit consequatur saepe.</p>\n" +
 "");
-        lp.getResponseViewConfigData().setSummaryToNavElement("<div class=\"d-flex flex-column w-100\">\n" +
+        lp.setSummaryToNavElement("<div class=\"d-flex flex-column w-100\">\n" +
 "                    <div class=\"d-flex\">\n" +
 "                        <div class=\"border flex-fill container containerCell\" style=\"width:16%;\">\n" +
 "                            <ul>\n" +
@@ -128,33 +130,33 @@ public class AppService{
 "                        <div class=\"border flex-fill container containerCell\" style=\"width:50%;\">Flex item 3</div>\n" +
 "                    </div>\n" +
 "                </div>  ");
-        lp.getResponseViewConfigData().setVideoToNavElement(new VideoResource("https://www.youtube.com/embed/u79dkQxuSv4", "thymeleaf"));
-        lp.getResponseViewConfigData().addRelatedResourceToNavElement(new ItemResource("url/recurs.1", "Recurs 1"));
-        lp.getResponseViewConfigData().addRelatedResourceToNavElement(new ItemResource("url/recurs.2", "Recurs 2"));
-        lp.getResponseViewConfigData().addRelatedResourceToNavElement(new ItemResource("url/recurs.3", "Recurs 3"));
-        lp.getResponseViewConfigData().setLearningProposalNameToNavElement("Mira el món! Tot és codi?");   
+        lp.setVideoToNavElement(new VideoResource("https://www.youtube.com/embed/u79dkQxuSv4", "thymeleaf"));
+        lp.addRelatedResourceToNavElement(new ItemResource("url/recurs.1", "Recurs 1"));
+        lp.addRelatedResourceToNavElement(new ItemResource("url/recurs.2", "Recurs 2"));
+        lp.addRelatedResourceToNavElement(new ItemResource("url/recurs.3", "Recurs 3"));
+        lp.setLearningProposalNameToNavElement("Mira el món! Tot és codi?");   
         
         MefLinialProgressbarComponent pbc = new MefLinialProgressbarComponent();
         for(int i=1; i<=10; i++){
             pbc.addProgressBarNode(new ProgressBarNode(i, String.format("Exercici %1d", i)));
         }
         
-        lp.getResponseViewConfigData().addNavProgressBarComponent(pbc);
+        lp.addNavProgressBarComponent(pbc);
          
         learningProposalRepository.save(lp);
         
-        MefActivityConfiguration mefActivityConfiguration = new MefActivityConfiguration("ac001");
+        MefCodeEditorActivityConfiguration mefActivityConfiguration = new MefCodeEditorActivityConfiguration("ac001");
         
-        mefActivityConfiguration.getResponseViewComponent().getCodeActivity().setStatement("Volem fer un algoritme que cerqui si una llista de valors enters conté el valor 19");
-        mefActivityConfiguration.getResponseViewComponent().getCodeActivity().getInstructions().add("Assigna a la variable <i>a_trobar</i> el valor 19, que desitgem cercar.");
-        mefActivityConfiguration.getResponseViewComponent().getCodeActivity().getInstructions().add("Inicialitza la variable <i>pos</i> tenint en compte que indicarà la posició de lectura de la llista durant la cerca.");
-        mefActivityConfiguration.getResponseViewComponent().getCodeActivity().getInstructions().add("Inicialitza la resta de variables que necessitaràs per fer la cerca.");
-        mefActivityConfiguration.getResponseViewComponent().getCodeActivity().getInstructions().add("Posa la condició de sortida del bucle.");
-        mefActivityConfiguration.getResponseViewComponent().getCodeActivity().getInstructions().add("Marca la variable <i>trobat</i> en funció de si hi ha algun element de l'array que coincideix amb el valor de la variable <i>a_trobar</i>.");
-        mefActivityConfiguration.getResponseViewComponent().getCodeActivity().getInstructions().add("Mostra per pantalla el resultat de la cerca.");        
-        mefActivityConfiguration.getResponseViewComponent().getCodeActivity().getEditor().setFontsize(14);
-        mefActivityConfiguration.getResponseViewComponent().getCodeActivity().getEditor().setMode("python");
-        mefActivityConfiguration.getResponseViewComponent().getCodeActivity().getEditor().setDefaultText("values=[10, 20, 4, 7, 2, 19, 26, 1, 17, 0, 3, 21]\n\n"
+        mefActivityConfiguration.getCodeActivity().setStatement("Volem fer un algoritme que cerqui si una llista de valors enters conté el valor 19");
+        mefActivityConfiguration.getCodeActivity().getInstructions().add("Assigna a la variable <i>a_trobar</i> el valor 19, que desitgem cercar.");
+        mefActivityConfiguration.getCodeActivity().getInstructions().add("Inicialitza la variable <i>pos</i> tenint en compte que indicarà la posició de lectura de la llista durant la cerca.");
+        mefActivityConfiguration.getCodeActivity().getInstructions().add("Inicialitza la resta de variables que necessitaràs per fer la cerca.");
+        mefActivityConfiguration.getCodeActivity().getInstructions().add("Posa la condició de sortida del bucle.");
+        mefActivityConfiguration.getCodeActivity().getInstructions().add("Marca la variable <i>trobat</i> en funció de si hi ha algun element de l'array que coincideix amb el valor de la variable <i>a_trobar</i>.");
+        mefActivityConfiguration.getCodeActivity().getInstructions().add("Mostra per pantalla el resultat de la cerca.");        
+        mefActivityConfiguration.getCodeActivity().getEditor().setFontsize(14);
+        mefActivityConfiguration.getCodeActivity().getEditor().setMode("python");
+        mefActivityConfiguration.getCodeActivity().getEditor().setDefaultText("values=[10, 20, 4, 7, 2, 19, 26, 1, 17, 0, 3, 21]\n\n"
                 + "a_trobar = ____\n"
                 + "pos = ____\n"
                 + "____ =  ____\n"
@@ -164,24 +166,21 @@ public class AppService{
                 + "   pos = pos + 1\n\n"
                 + "_____"
                 + "");
-        mefActivityConfiguration.getResponseViewComponent().
-                getConfigComponentElements().add(
+        mefActivityConfiguration.getConfigComponentElements().add(
                         new MefTimerConfig(5000, "autoTimerFeedback"));
-        mefActivityConfiguration.getResponseViewComponent().
-                getConfigComponentElements().add(
-                        new MefCodeEditorModeConfig(mefActivityConfiguration.
-                                getResponseViewComponent().getCodeActivity().
+        mefActivityConfiguration.getConfigComponentElements().add(
+                        new MefCodeEditorModeConfig(mefActivityConfiguration.getCodeActivity().
                                 getEditor().getMode()));
         MefClueComponent mefClueComponent = new MefClueComponent("cls-001");
         mefClueComponent.getClueConfigData().addAllowedClueIteratorType("SequentialClueIterator");
         
-        mefActivityConfiguration.getResponseViewComponent().getComponentMap().put("clueComponent", mefClueComponent);
+        mefActivityConfiguration.getComponentMap().put("clueComponent", mefClueComponent);
         
         activityRepository.save(mefActivityConfiguration);
         //FI de la simulació de dades
         
         //Codi de l'init
-        starterManager = new MefStarterManager();
+        starterManager = new BaseStarterManager();
         starterManager.init(learningStateRepository, learningProposalRepository, activityRepository);
 
     }
