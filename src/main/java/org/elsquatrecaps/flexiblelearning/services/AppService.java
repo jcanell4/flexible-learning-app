@@ -18,14 +18,24 @@ package org.elsquatrecaps.flexiblelearning.services;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import org.elsquatrecaps.flexiblelearning.eventactivity.request.EventData;
+import org.elsquatrecaps.flexiblelearning.eventactivity.request.EventDataMap;
+import org.elsquatrecaps.flexiblelearning.eventactivity.responses.EventResponseData;
+import org.elsquatrecaps.flexiblelearning.eventcomposer.components.ActivityEventProcessorConfiguration;
+import org.elsquatrecaps.flexiblelearning.eventcomposer.components.MefActivityEventProcessorConfiguration;
+import org.elsquatrecaps.flexiblelearning.eventcomposer.components.ActivityEventProcessorId;
+import org.elsquatrecaps.flexiblelearning.eventcomposer.components.BaseEventComponentConfiguration;
+import org.elsquatrecaps.flexiblelearning.eventcomposer.components.BaseGroupingOfEventProcessorsConfiguration;
 import org.elsquatrecaps.flexiblelearning.learningstate.LearningState;
+import org.elsquatrecaps.flexiblelearning.manager.event.BaseEventManager;
+import org.elsquatrecaps.flexiblelearning.manager.event.EventManager;
 import org.elsquatrecaps.flexiblelearning.manager.starter.BaseStarterManager;
 import org.elsquatrecaps.flexiblelearning.persistence.ActivityRepository;
 import org.elsquatrecaps.flexiblelearning.persistence.ClueSetConfigRepository;
 import org.elsquatrecaps.flexiblelearning.persistence.LearningProposalRepository;
 import org.elsquatrecaps.flexiblelearning.persistence.LearningStateRepository;
 import org.elsquatrecaps.flexiblelearning.manager.starter.StarterManager;
-import org.elsquatrecaps.flexiblelearning.viewcomposer.components.ResponseViewComponent;
+import org.elsquatrecaps.flexiblelearning.persistence.EventRepository;
 import org.elsquatrecaps.mef.learningproposal.MefCodeEditorActivityConfiguration;
 import org.elsquatrecaps.mef.learningproposal.MefLearningProposalConfiguration;
 import org.elsquatrecaps.mef.templates.viewcomposer.components.codeeditor.MefCodeEditorModeConfig;
@@ -47,12 +57,15 @@ import org.springframework.web.servlet.ModelAndView;
 @Service
 public class AppService{
     StarterManager starterManager;
+    EventManager eventManager;
     @Autowired 
     LearningStateRepository learningStateRepository;
     @Autowired 
     LearningProposalRepository learningProposalRepository;
     @Autowired 
     ActivityRepository activityRepository;
+    @Autowired 
+    EventRepository eventRepository;
     @Autowired 
     ClueSetConfigRepository clueSetConfigRepository;
 
@@ -64,6 +77,9 @@ public class AppService{
         MefLearningProposalConfiguration lp;
         LearningState ls;
         learningStateRepository.deleteAll();
+        learningProposalRepository.deleteAll();
+        activityRepository.deleteAll();
+        eventRepository.deleteAll();
         
         ls = new LearningState("st001", "lp001", "ac001");
         learningStateRepository.save(ls);
@@ -78,7 +94,6 @@ public class AppService{
         ls = new LearningState("st003", "lp001", "ac008");
         learningStateRepository.save(ls);
         
-        learningProposalRepository.deleteAll();
         List<String> authors = new ArrayList<>();
         authors.add("Belén Bergós");
         authors.add("Josep Cañellas");
@@ -167,7 +182,7 @@ public class AppService{
                 + "_____"
                 + "");
         mefActivityConfiguration.getConfigComponentElements().add(
-                        new MefTimerConfig(5000, "autoTimerFeedback"));
+                        new MefTimerConfig(5000, "processEventToJson/eco"));
         mefActivityConfiguration.getConfigComponentElements().add(
                         new MefCodeEditorModeConfig(mefActivityConfiguration.getCodeActivity().
                                 getEditor().getMode()));
@@ -175,13 +190,25 @@ public class AppService{
         mefClueComponent.getClueConfigData().addAllowedClueIteratorType("SequentialClueIterator");
         
         mefActivityConfiguration.getComponentMap().put("clueComponent", mefClueComponent);
-        
+
         activityRepository.save(mefActivityConfiguration);
+        
+        ActivityEventProcessorConfiguration activityEventProcessorConfiguration = new MefActivityEventProcessorConfiguration(
+                new ActivityEventProcessorId("lp001", "ac001", "eco"),
+                new BaseEventComponentConfiguration("default", "SimpleMapActivityEventDataConverter"),
+                new BaseGroupingOfEventProcessorsConfiguration("mef", "MefActivityEventResponseHandler")
+        );
+        activityEventProcessorConfiguration.getEventComponentConfigurationList().add(new BaseEventComponentConfiguration("default", "EcoEventProcessor"));
+        eventRepository.save(activityEventProcessorConfiguration);
+        
+        
         //FI de la simulació de dades
         
         //Codi de l'init
         starterManager = new BaseStarterManager();
         starterManager.init(learningStateRepository, learningProposalRepository, activityRepository);
+        eventManager = new BaseEventManager();
+        eventManager.init(eventRepository, learningStateRepository, learningProposalRepository, activityRepository);
 
     }
     
@@ -189,5 +216,17 @@ public class AppService{
         ModelAndView modelAndView = null;
         modelAndView = starterManager.start(studentId, learningProposalId);
         return modelAndView;
+    }
+    
+    public ModelAndView processEventToHtml(String lpId, String stId, String eventName, EventDataMap eventData){
+        ModelAndView modelAndView = null;
+        modelAndView = eventManager.processEventAndResponseHtml(eventData);
+        return modelAndView;
+    }
+
+    public EventResponseData processEventToJson(String lpId, String stId, String eventName, EventDataMap eventData){
+        EventResponseData ret = null;
+        ret = eventManager.processEventAndResponseJson(lpId, stId, eventName, eventData);
+        return ret;
     }
 }
